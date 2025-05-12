@@ -8,4 +8,4 @@ Trash
 
 # Ignore Terraform lock file (optional, but sometimes recommended)
 /Terraform/.terraform.lock.hcl
-/Terraform/modules/
+/Terraform/
