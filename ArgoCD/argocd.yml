@@ -1,0 +1,29 @@
+# application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devops-project
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/m3bdlkawy/DevOps-project.git
+    targetRevision: main
+    path: helm-chart
+    helm:
+      # Optional: Specify values files from your chart
+      valueFiles:
+      - values.yaml
+      # Optional: Override values
+      values: |
+        service:
+          type: NodePort
+  destination:
+    server: https://kubernetes.default.svc # Deploy to current cluster
+    namespace: devops-project # Target namespace
+  syncPolicy:
+    automated:
+      prune: true # Remove old resources
+      selfHeal: true # Auto-correct configuration drift
+    syncOptions:
+    - CreateNamespace=true # Auto-create target namespace

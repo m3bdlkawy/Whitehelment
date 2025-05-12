@@ -1,0 +1,21 @@
+# values.yaml
+controller:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 32080 
+      https: 32443 
+    httpPort:
+      enable: true
+      port: 80
+      targetPort: 80
+    httpsPort:
+      enable: true
+      port: 443
+      targetPort: 443
+
+
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace \
+  -f custom-values.yaml

@@ -1,0 +1,6 @@
+Trash
+/Terraform/modules/
+/Terraform/.terraform/
+/Terraform/*.tfstate
+/Terraform*.tfstate.*
+/Terraform*.tfvars
