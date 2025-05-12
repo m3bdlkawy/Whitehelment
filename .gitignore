@@ -1,6 +1,11 @@
 Trash
-/Terraform/modules/
+# Ignore all .terraform directories (local plugins/modules)
 /Terraform/.terraform/
+
+# Ignore Terraform state files (can contain sensitive data)
 /Terraform/*.tfstate
-/Terraform*.tfstate.*
-/Terraform*.tfvars
+/Terraform/*.tfstate.*
+
+# Ignore Terraform lock file (optional, but sometimes recommended)
+/Terraform/.terraform.lock.hcl
+/Terraform/modules/
