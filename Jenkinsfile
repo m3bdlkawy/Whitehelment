@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     environment {
+        AWS_ACCESS_KEY_ID     = credentials('AWS-Credentials')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS-Credentials')
         DOCKER_IMAGE          = "m3bdlkawy/whitehelment"
         DOCKER_REGISTRY       = "https://index.docker.io/v1/"
         TF_WORKING_DIR        = "Terraform"
