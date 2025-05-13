@@ -102,20 +102,20 @@
     register: ingress_deploy
     changed_when: "'STATUS: deployed' in ingress_deploy.stdout"
 
-  # Application Deployment
-  - name: Check application chart existence
-    ansible.builtin.stat:
-      path: "{{ project_dir }}/Helm-Charts/app-helm-chart"
-    register: helm_chart_dir
+  # # Application Deployment
+  # - name: Check application chart existence
+  #   ansible.builtin.stat:
+  #     path: "{{ project_dir }}/Helm-Charts/app-helm-chart"
+  #   register: helm_chart_dir
 
-  - name: Deploy application chart
-    command: >-
-      helm upgrade --install my-app . --values ./values.yaml --create-namespace --kubeconfig "{{ kubeconfig }}" --wait
-    args:
-      chdir: "{{ project_dir }}/Helm-Charts/app-helm-chart"
-    when: helm_chart_dir.stat.exists
-    register: app_deploy
-    changed_when: "'STATUS: deployed' in app_deploy.stdout"
+  # - name: Deploy application chart
+  #   command: >-
+  #     helm upgrade --install my-app . --values ./values.yaml --create-namespace --kubeconfig "{{ kubeconfig }}" --wait
+  #   args:
+  #     chdir: "{{ project_dir }}/Helm-Charts/app-helm-chart"
+  #   when: helm_chart_dir.stat.exists
+  #   register: app_deploy
+  #   changed_when: "'STATUS: deployed' in app_deploy.stdout"
 
   # Argo CD Deployment
   - name: Verify Argo CD chart directory
@@ -130,10 +130,10 @@
     args:
       chdir: "{{ project_dir }}/Helm-Charts/argo-cd"
     when: argocd_chart_dir.stat.exists
-    register: argocd_deploy
-    changed_when: "'STATUS: deployed' in argocd_deploy.stdout"
+    # register: argocd_deploy
+    # changed_when: "'STATUS: deployed' in argocd_deploy.stdout"
 
-  # Prometheus Stack Deployment
+    # Prometheus Stack Deployment
   - name: Check Prometheus chart directory
     ansible.builtin.stat:
       path: "{{ project_dir }}/Helm-Charts/kube-prometheus-stack"
