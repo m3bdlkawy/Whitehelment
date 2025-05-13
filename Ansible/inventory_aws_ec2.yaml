@@ -3,7 +3,7 @@ regions:
 - us-east-1
 keyed_groups:
 - key: tags
-  prefix: "group"
+  prefix: group
 compose:
   ansible_host: public_ip_address
-  ansible_user: "ubuntu"
+  ansible_user: ubuntu
