@@ -19,7 +19,7 @@ pipeline {
     }
 
     stages {
-        /*
+        
         stage('Clone Repository') {
             steps {
                 git(
@@ -52,7 +52,6 @@ pipeline {
                 }
             }
         }
-        */
 
         stage('Terraform Init & Apply') {
             steps {

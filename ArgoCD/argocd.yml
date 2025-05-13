@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: devops-project
+  name: whitehelment-project
   namespace: argocd
 spec:
   project: default

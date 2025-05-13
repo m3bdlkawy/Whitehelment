@@ -3,61 +3,54 @@ global:
 
 redis-ha:
   enabled: true
-  replicas: 3 # Minimum for true HA
-  haproxy:
-    enabled: true
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
+  replicas: 3
 
 server:
-  replicas: 1
+  # Merged server configuration
+  replicas: 3
   autoscaling:
     enabled: true
     minReplicas: 2
-    maxReplicas: 3
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
+    maxReplicas: 5
   service:
     type: NodePort
     nodePort: 30080
-
+  rbacConfig:
+    # Moved under the same server block
+    policy.csv: |
+      g, platform-team, role:admin
+      g, team-alpha, role:readonly
+  # Resource quotas for multi-tenancy (optional)
+  # resourceCustomizations: |
+  #   argoproj.io/Application:
+  #     limit:
+  #       memory: 512Mi
+  #       cpu: 500m
 repoServer:
-  replicas: 1
+  replicas: 3
   autoscaling:
     enabled: true
     minReplicas: 2
-    maxReplicas: 3
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
+    maxReplicas: 5
+
+applicationSet:
+  replicas: 2
 
 controller:
-  replicas: 1
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
+  replicas: 2
+  env:
+  - name: ARGOCD_CONTROLLER_REPLICAS
+    value: "2"
+  - name: ARGOCD_CONTROLLER_SHARDING_ALGORITHM
+    value: "consistent-hashing"
 
-rbacConfig:
-  policy.csv: |
-    g, admin, role:admin
-    # Production recommendation:
-    # g, dev-team, role:readonly
-    # g, ops-team, role:admin
+# Multi-Tenancy Configuration
+# projects:
+#   # Example project for team-alpha (repeat for other teams)
+#   - name: team-alpha
+#     description: Team Alpha Project
+#     destinations:
+#       - namespace: devops-namespace
+#         server: https://kubernetes.default.svc
+#     sourceRepos:
+#       - https://github.com/m3bdlkawy/DevOps-project/tree/main/helm-chart
