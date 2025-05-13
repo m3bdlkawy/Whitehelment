@@ -1,7 +1,7 @@
 {
     "name": "whitehelment-project",
     "version": "1.0.0",
-    "description": "",
+    "description": "This is repo for deploying kubernetes cluster with terrafrom ansible and deploy the CNI , monitoring stack , Ingress , Istio and actual app with Helm",
     "main": "index.js",
     "scripts": {
         "test": "jest --detectOpenHandles"
@@ -15,5 +15,8 @@
     "devDependencies": {
         "jest": "^29.0.0",
         "supertest": "^6.3.3"
+    },
+    "directories": {
+        "test": "tests"
     }
 }

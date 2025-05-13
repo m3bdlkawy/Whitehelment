@@ -2,11 +2,17 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
+# Copy the rest of the source code
 COPY . .
+
+# Run tests
 RUN npm test
+
+# Remove devDependencies for production
 RUN npm prune --production
 
 FROM node:18-alpine
