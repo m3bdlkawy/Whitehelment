@@ -7,7 +7,7 @@
   - role: common
   - role: kubernetes
 
-- hosts: _master
+- hosts: master
   become: true
   gather_facts: true
 
@@ -15,7 +15,7 @@
   - role: master
   - role: cni
 
-- hosts: _orker
+- hosts: worker
   become: true
   gather_facts: true
   roles:

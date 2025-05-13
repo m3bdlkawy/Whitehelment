@@ -18,62 +18,62 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git(
-                    credentialsId: 'github-token',
-                    branch: 'main',
-                    url: 'https://github.com/m3bdlkawy/Whitehelment.git',
-                    poll: true
-                )
-            }
-        }
+    // stages {
+    //     stage('Clone Repository') {
+    //         steps {
+    //             git(
+    //                 credentialsId: 'github-token',
+    //                 branch: 'main',
+    //                 url: 'https://github.com/m3bdlkawy/Whitehelment.git',
+    //                 poll: true
+    //             )
+    //         }
+    //     }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dockerImage = docker.build(
-                        "${DOCKER_IMAGE}:${env.BUILD_NUMBER}",
-                        "--build-arg BUILD_NUMBER=${env.BUILD_NUMBER} ."
-                    )
-                }
-            }
-        }
+    //     stage('Build Docker Image') {
+    //         steps {
+    //             script {
+    //                 dockerImage = docker.build(
+    //                     "${DOCKER_IMAGE}:${env.BUILD_NUMBER}",
+    //                     "--build-arg BUILD_NUMBER=${env.BUILD_NUMBER} ."
+    //                 )
+    //             }
+    //         }
+    //     }
 
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry(env.DOCKER_REGISTRY, 'dockerhub-credentials') {
-                        dockerImage.push("${env.BUILD_NUMBER}")
-                        dockerImage.push("latest")
-                    }
-                }
-            }
-        }
+    //     stage('Push to Docker Hub') {
+    //         steps {
+    //             script {
+    //                 docker.withRegistry(env.DOCKER_REGISTRY, 'dockerhub-credentials') {
+    //                     dockerImage.push("${env.BUILD_NUMBER}")
+    //                     dockerImage.push("latest")
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        stage('Terraform Init & Apply') {
-            steps {
-                dir(env.TF_WORKING_DIR) {
-                    script {
-                        sh 'terraform init -input=false'
-                        sh 'terraform validate'
-                        sh 'terraform apply -auto-approve'
-                    }
-                }
-            }
-        }
+    //     stage('Terraform Init & Apply') {
+    //         steps {
+    //             dir(env.TF_WORKING_DIR) {
+    //                 script {
+    //                     sh 'terraform init -input=false'
+    //                     sh 'terraform validate'
+    //                     sh 'terraform apply -auto-approve'
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        stage('Wait for EC2 Initialization') {
-            steps {
-                script {
-                    echo "Waiting for EC2 initialization..."
-                    retry(3) {
-                        sleep(time: 120, unit: 'SECONDS')
-                    }
-                }
-            }
-        }
+    //     stage('Wait for EC2 Initialization') {
+    //         steps {
+    //             script {
+    //                 echo "Waiting for EC2 initialization..."
+    //                 retry(3) {
+    //                     sleep(time: 120, unit: 'SECONDS')
+    //                 }
+    //             }
+    //         }
+    //     }
 
         stage('Infrastructure Setup with Ansible') {
             steps {
