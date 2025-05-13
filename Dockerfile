@@ -1,5 +1,5 @@
 # Stage 1: Build and Test
-FROM node:18-alpine AS builder
+FROM node:latest AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN npm test
 RUN npm prune --production
 
 # Stage 2: Production Image
-FROM node:18-alpine
+FROM node:latest
 
 WORKDIR /app
 
