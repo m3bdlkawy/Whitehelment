@@ -1,56 +1,60 @@
+# Minimal configuration with all features ENABLED
+# All replicas set to 1 (Not HA)
+# Uncomment recommended values for production
+
 global:
   multiTenant: true
 
+### Redis ###
 redis-ha:
-  enabled: true
-  replicas: 3
+  enabled: true # HA enabled but only 1 replica
+  replicas: 1 # Single node (not actually HA)
+  # Recommended for production:
+  # replicas: 3  # Minimum for true HA
 
+  ### Argo CD Server ###
 server:
-  # Merged server configuration
-  replicas: 3
+  replicas: 1
   autoscaling:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 5
+    enabled: true # Autoscaling enabled
+    minReplicas: 1 # But only scales from 1-1
+    maxReplicas: 1
+    # Recommended for production:
+    # minReplicas: 2
+    # maxReplicas: 3
   service:
     type: NodePort
     nodePort: 30080
-  rbacConfig:
-    # Moved under the same server block
-    policy.csv: |
-      g, platform-team, role:admin
-      g, team-alpha, role:readonly
-  # Resource quotas for multi-tenancy (optional)
-  # resourceCustomizations: |
-  #   argoproj.io/Application:
-  #     limit:
-  #       memory: 512Mi
-  #       cpu: 500m
+
+### Repo Server ###
 repoServer:
-  replicas: 3
+  replicas: 1
   autoscaling:
     enabled: true
-    minReplicas: 2
-    maxReplicas: 5
+    minReplicas: 1
+    maxReplicas: 1
+    # Recommended:
+    # minReplicas: 2
+    # maxReplicas: 3
 
-applicationSet:
-  replicas: 2
-
+    ### Application Controller ###
 controller:
-  replicas: 2
+  replicas: 1
   env:
   - name: ARGOCD_CONTROLLER_REPLICAS
-    value: "2"
+    value: "1" # Sharding enabled but only 1 shard
   - name: ARGOCD_CONTROLLER_SHARDING_ALGORITHM
-    value: "consistent-hashing"
+    value: "consistent-hashing" # Algorithm active
+  # Recommended for production:
+  # replicas: 2
+  # env:
+  #   - name: ARGOCD_CONTROLLER_REPLICAS
+  #     value: "2"
 
-# # Multi-Tenancy Configuration
-# projects:
-#   # Example project for team-alpha (repeat for other teams)
-#   - name: team-alpha
-#     description: Team Alpha Project
-#     destinations:
-#       - namespace: devops-namespace
-#         server: https://kubernetes.default.svc
-#     sourceRepos:
-#       - https://github.com/m3bdlkawy/DevOps-project/tree/main/helm-chart
+  ### RBAC ###
+rbacConfig:
+  policy.csv: |
+    g, admin, role:admin
+    # Production recommendation:
+    # g, dev-team, role:readonly
+    # g, ops-team, role:admin
