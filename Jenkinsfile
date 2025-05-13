@@ -53,6 +53,7 @@ pipeline {
             }
         }
         */
+
         stage('Terraform Init & Apply') {
             steps {
                 dir(env.TF_WORKING_DIR) {
@@ -75,9 +76,7 @@ pipeline {
                 }
             }
         }
-       
 
-        // The pipeline will start here:
         stage('Infrastructure Setup with Ansible') {
             steps {
                 withCredentials([
@@ -100,7 +99,7 @@ pipeline {
                 }
             }
         }
-        */
+
         stage('Helm Deployment with Ansible') {
             steps {
                 withCredentials([
@@ -136,6 +135,5 @@ pipeline {
                 }
             }
         }
-        // All email notifications have been removed
     }
 }
