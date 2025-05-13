@@ -130,13 +130,13 @@ pipeline {
             }
         }
         success {
-            emailext body: 'Deployment completed successfully!', subject: 'SUCCESS: Deployment Notification', to: 'team@example.com'
+            emailext body: 'Deployment completed successfully!', subject: 'SUCCESS: Deployment Notification', to: 'abdelkawy212@gmail.com'
         }
         failure {
-            emailext body: 'Deployment failed! Check Jenkins logs for details.', subject: 'FAILURE: Deployment Notification', to: 'team@example.com'
+            emailext body: 'Deployment failed! Check Jenkins logs for details.', subject: 'FAILURE: Deployment Notification', to: 'abdelkawy212@gmail.com'
         }
         unstable {
-            emailext body: 'Deployment marked as unstable!', subject: 'UNSTABLE: Deployment Notification', to: 'team@example.com'
+            emailext body: 'Deployment marked as unstable!', subject: 'UNSTABLE: Deployment Notification', to: 'abdelkawy212@gmail.com'
         }
     }
 }
