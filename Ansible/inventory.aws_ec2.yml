@@ -1,19 +1,15 @@
+plugin: amazon.aws.aws_ec2
 regions:
 - us-east-1
-
-# Use private IP as the primary identifier
 hostnames:
-- private-ip-address # This will be the inventory_hostname
-- ip-address # Fallback options
+- ip-address
 - public-ip-address
-
-# Group by Name tag without underscores
+- private-ip-address
 keyed_groups:
 - key: tags.Name
   prefix: ""
   separator: ""
 
-# Connection configuration
 compose:
   ansible_host: public_ip_address | default(private_ip_address)
   ansible_user: "ubuntu"
