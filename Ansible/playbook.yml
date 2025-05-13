@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: aws_ec2
   become: true
   gather_facts: true
 
@@ -7,7 +7,7 @@
   - role: common
   - role: kubernetes
 
-- hosts: master
+- hosts: _master
   become: true
   gather_facts: true
 
@@ -15,7 +15,7 @@
   - role: master
   - role: cni
 
-- hosts: worker
+- hosts: _orker
   become: true
   gather_facts: true
   roles:

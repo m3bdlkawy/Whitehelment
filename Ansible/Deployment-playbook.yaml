@@ -1,5 +1,5 @@
 ---
-- hosts: group_Name_master
+- hosts: _master
   become: true
   gather_facts: true
   vars:

@@ -1,9 +1,9 @@
 resource "aws_instance" "master" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  key_name               = "project" 
-  vpc_security_group_ids = [var.security_group_id]
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  key_name                    = "project"
+  vpc_security_group_ids      = [var.security_group_id]
   associate_public_ip_address = true
 
   user_data = <<-EOF
@@ -13,15 +13,16 @@ resource "aws_instance" "master" {
 
   tags = {
     Name = "master"
+    Role = "master"
   }
 }
 
 resource "aws_instance" "worker1" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  key_name               = "project"  
-  vpc_security_group_ids = [var.security_group_id]
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  key_name                    = "project"
+  vpc_security_group_ids      = [var.security_group_id]
   associate_public_ip_address = true
 
   user_data = <<-EOF
@@ -31,15 +32,16 @@ resource "aws_instance" "worker1" {
 
   tags = {
     Name = "worker"
+    Role = "worker"
   }
 }
 
 resource "aws_instance" "worker2" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  key_name               = "project" 
-  vpc_security_group_ids = [var.security_group_id]
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  key_name                    = "project"
+  vpc_security_group_ids      = [var.security_group_id]
   associate_public_ip_address = true
 
   user_data = <<-EOF
@@ -49,5 +51,6 @@ resource "aws_instance" "worker2" {
 
   tags = {
     Name = "worker"
+    Role = "worker"
   }
 }
