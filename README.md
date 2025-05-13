@@ -49,12 +49,25 @@ WhiteHelment/
 - **Container Orchestration**: Kubernetes
 - **CI/CD**: Jenkins pipeline for automation
 - **Package Management**: Helm for K8s resources deployment
-- **Service Mesh**: Istio
 - **Monitoring**: Prometheus/Grafana stack
 - **Ingress Controller**: NGINX
 - **GitOps**: ArgoCD
 - **Application**: Express.js (Node.js)
 
+
+## Customizations and Important Notes
+
+### Helm Chart Sources Updated
+The Helm repositories for the following components have been updated to ensure reliable, up-to-date deployments:
+
+- `kube-prometheus-stack`
+- `NGINX Ingress Controller`
+
+### ArgoCD Service Exposure
+The ArgoCD service has been configured as a `NodePort` service. This allows external access to the ArgoCD web interface via:
+```bash
+http://<node-ip>:30080
+```
 ## Prerequisites
 
 - AWS Account with appropriate permissions
