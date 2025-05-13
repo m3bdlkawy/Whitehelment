@@ -75,7 +75,7 @@ pipeline {
                 }
             }
         }
-        */
+       
 
         // The pipeline will start here:
         stage('Infrastructure Setup with Ansible') {
@@ -100,7 +100,7 @@ pipeline {
                 }
             }
         }
-
+        */
         stage('Helm Deployment with Ansible') {
             steps {
                 withCredentials([
