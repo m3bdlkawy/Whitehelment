@@ -1,57 +1,60 @@
-# Minimal configuration with all features ENABLED
-# All replicas set to 1 (Not HA)
-# Uncomment recommended values for production
-
 global:
   multiTenant: true
 
-### Redis ###
 redis-ha:
-  enabled: true # HA enabled but only 1 replica
-  replicas: 1 # Single node (not actually HA)
-  # Recommended for production:
-  # replicas: 3  # Minimum for true HA
+  enabled: true
+  replicas: 3 # Minimum for true HA
+  haproxy:
+    enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
 
-  ### Argo CD Server ###
 server:
   replicas: 1
   autoscaling:
-    enabled: true # Autoscaling enabled
-    minReplicas: 1 # But only scales from 1-1
-    maxReplicas: 1
-    # Recommended for production:
-    # minReplicas: 2
-    # maxReplicas: 3
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
   service:
     type: NodePort
     nodePort: 30080
 
-### Repo Server ###
 repoServer:
   replicas: 1
   autoscaling:
     enabled: true
-    minReplicas: 1
-    maxReplicas: 1
-    # Recommended:
-    # minReplicas: 2
-    # maxReplicas: 3
+    minReplicas: 2
+    maxReplicas: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
-    ### Application Controller ###
 controller:
   replicas: 1
-  env:
-  - name: ARGOCD_CONTROLLER_REPLICAS
-    value: "1" # Sharding enabled but only 1 shard
-  - name: ARGOCD_CONTROLLER_SHARDING_ALGORITHM
-    value: "consistent-hashing" # Algorithm active
-  # Recommended for production:
-  # replicas: 2
-  # env:
-  #   - name: ARGOCD_CONTROLLER_REPLICAS
-  #     value: "2"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
-  ### RBAC ###
 rbacConfig:
   policy.csv: |
     g, admin, role:admin
