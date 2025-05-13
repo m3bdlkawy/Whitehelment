@@ -87,7 +87,7 @@ pipeline {
                     dir(env.ANSIBLE_WORKING_DIR) {
                         script {
                             sh """
-                            ansible-playbook -i inventory_aws_ec2.yaml playbook.yml \
+                            ansible-playbook -i inventory.aws_ec2.yml playbook.yml \
                             --private-key $SSH_KEY_PATH \
                             -u $SSH_USER \
                             -e ansible_python_interpreter=/usr/bin/python3
@@ -110,7 +110,7 @@ pipeline {
                     dir(env.ANSIBLE_WORKING_DIR) {
                         script {
                             sh """
-                            ansible-playbook -i inventory_aws_ec2.yaml Deployment-playbook.yaml \
+                            ansible-playbook -i inventory.aws_ec2.yml Deployment-playbook.yaml \
                             --private-key $SSH_KEY_PATH \
                             -u $SSH_USER \
                             -e ansible_python_interpreter=/usr/bin/python3
