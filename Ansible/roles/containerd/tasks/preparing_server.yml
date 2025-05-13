@@ -49,12 +49,11 @@
   ansible.builtin.blockinfile:
     path: /etc/hosts
     block: |
-      {% for host in groups['all'] %}
-      {{ hostvars[host]['ansible_host'] }} {{ hostvars[host]['inventory_hostname'] }}
+      {% for host in groups['aws_ec2'] %}
+      {{ hostvars[host]['ansible_host'] }} {{ hostvars[host]['ansible_hostname'] }}
       {% endfor %}
     marker: "# BEGIN ANSIBLE MANAGED BLOCK"
     create: yes
     state: present
-    insertafter: EOF
     backup: yes
   become: true
