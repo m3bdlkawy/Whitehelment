@@ -17,15 +17,18 @@
     #   url: https://kubernetes.github.io/ingress-nginx
 
   tasks:
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+    changed_when: false
+
   - name: Install required packages
     apt:
       name:
       - curl
       - software-properties-common
       state: present
-      update_cache: yes
-    register: pkg_install
-    changed_when: "'0 upgraded' not in pkg_install.stdout"
+      update_cache: no
 
   - name: Download Helm installation script
     get_url:
