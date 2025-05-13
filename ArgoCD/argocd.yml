@@ -1,4 +1,3 @@
-# application.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -7,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/m3bdlkawy/DevOps-project.git
+    repoURL: https://github.com/m3bdlkawy/Whitehelment.git
     targetRevision: main
-    path: helm-chart
+    path: Helm-Charts/app-helm-chart
     helm:
       # Optional: Specify values files from your chart
       valueFiles:
@@ -19,11 +18,11 @@ spec:
         service:
           type: NodePort
   destination:
-    server: https://kubernetes.default.svc # Deploy to current cluster
-    namespace: devops-project # Target namespace
+    server: https://kubernetes.default.svc
+    namespace: whitehelment-project
   syncPolicy:
     automated:
-      prune: true # Remove old resources
-      selfHeal: true # Auto-correct configuration drift
+      prune: true
+      selfHeal: true
     syncOptions:
-    - CreateNamespace=true # Auto-create target namespace
+    - CreateNamespace=true

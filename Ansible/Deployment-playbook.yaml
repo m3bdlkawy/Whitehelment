@@ -1,0 +1,168 @@
+---
+- hosts: group_Name_master
+  become: true
+  gather_facts: true
+  vars:
+    helm_script_path: /home/ubuntu/get_helm.sh
+    project_dir: /home/ubuntu/Whitehelment
+    kubeconfig: /home/ubuntu/.kube/config
+    helm_repos:
+    - name: stable
+      url: https://charts.helm.sh/stable
+    # - name: argo
+    #   url: https://argoproj.github.io/argo-helm
+    # - name: prometheus-community
+    #   url: https://prometheus-community.github.io/helm-charts
+    # - name: ingress-nginx
+    #   url: https://kubernetes.github.io/ingress-nginx
+
+  tasks:
+  - name: Install required packages
+    apt:
+      name:
+      - curl
+      - software-properties-common
+      state: present
+      update_cache: yes
+    register: pkg_install
+    changed_when: "'0 upgraded' not in pkg_install.stdout"
+
+  - name: Download Helm installation script
+    get_url:
+      url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      dest: "{{ helm_script_path }}"
+      mode: 'u+x'
+    register: helm_download
+    retries: 3
+    delay: 10
+    until: helm_download is succeeded
+
+  - name: Validate Helm script existence
+    ansible.builtin.stat:
+      path: "{{ helm_script_path }}"
+    register: helm_script
+    failed_when: not helm_script.stat.exists
+
+  - name: Install Helm
+    command: "{{ helm_script_path }}"
+    args:
+      chdir: /home/ubuntu
+    register: helm_install
+    changed_when: "'Helm' not in helm_install.stdout"
+    notify: Cleanup Helm script
+
+  - name: Verify Helm installation
+    command: helm version
+    register: helm_version
+    changed_when: false
+    retries: 3
+    delay: 5
+    until: helm_version.rc == 0
+
+  - name: Configure Helm repositories
+    command: "helm repo add {{ item.name }} {{ item.url }}"
+    loop: "{{ helm_repos }}"
+    register: repo_add
+    changed_when: "'already exists' not in repo_add.stdout"
+    retries: 2
+    delay: 5
+
+  - name: Update Helm repositories
+    command: helm repo update
+    register: repo_update
+    changed_when: "'Successfully got an update' in repo_update.stdout"
+
+  - name: Clone application repository
+    git:
+      repo: 'https://github.com/m3bdlkawy/Whitehelment.git'
+      dest: "{{ project_dir }}"
+      version: main
+      force: yes
+    register: repo_clone
+    changed_when: repo_clone.changed
+    retries: 3
+    delay: 10
+
+  # NGINX Ingress Deployment
+  - name: Verify Ingress-NGINX chart directory
+    ansible.builtin.stat:
+      path: "{{ project_dir }}/Helm-Charts/ingress-nginx"
+    register: ingress_nginx_chart_dir
+
+  - name: Deploy ingress-nginx
+    ansible.builtin.command:
+      cmd: >-
+        helm upgrade --install ingress-nginx . --namespace ingress-nginx --create-namespace --values ./custom-values.yaml --kubeconfig "{{ kubeconfig }}" --wait
+    args:
+      chdir: "{{ project_dir }}/Helm-Charts/ingress-nginx"
+    when: ingress_nginx_chart_dir.stat.exists
+    register: ingress_deploy
+    changed_when: "'STATUS: deployed' in ingress_deploy.stdout"
+
+  # # Application Deployment
+  # - name: Check application chart existence
+  #   ansible.builtin.stat:
+  #     path: "{{ project_dir }}/Helm-Charts/app-helm-chart"
+  #   register: helm_chart_dir
+
+  # - name: Deploy application chart
+  #   command: >-
+  #     helm upgrade --install my-app . --values ./values.yaml --create-namespace --kubeconfig "{{ kubeconfig }}" --wait
+  #   args:
+  #     chdir: "{{ project_dir }}/Helm-Charts/app-helm-chart"
+  #   when: helm_chart_dir.stat.exists
+  #   register: app_deploy
+  #   changed_when: "'STATUS: deployed' in app_deploy.stdout"
+
+  # Argo CD Deployment
+  - name: Verify Argo CD chart directory
+    ansible.builtin.stat:
+      path: "{{ project_dir }}/Helm-Charts/argo-cd"
+    register: argocd_chart_dir
+
+  - name: Deploy Argo CD
+    ansible.builtin.command:
+      cmd: >-
+        helm upgrade --install argocd . --namespace argocd --create-namespace --values ./custom-values.yaml --kubeconfig "{{ kubeconfig }}" --wait
+    args:
+      chdir: "{{ project_dir }}/Helm-Charts/argo-cd"
+    when: argocd_chart_dir.stat.exists
+    register: argocd_deploy
+    changed_when: "'STATUS: deployed' in argocd_deploy.stdout"
+
+  # Prometheus Stack Deployment
+  - name: Check Prometheus chart directory
+    ansible.builtin.stat:
+      path: "{{ project_dir }}/Helm-Charts/kube-prometheus-stack"
+    register: prometheus_chart_dir
+
+  - name: Deploy monitoring stack
+    ansible.builtin.command:
+      cmd: >-
+        helm upgrade --install prometheus . --namespace prometheus --create-namespace --values ./custom-values.yaml --kubeconfig "{{ kubeconfig }}" --wait
+    args:
+      chdir: "{{ project_dir }}/Helm-Charts/kube-prometheus-stack"
+    when: prometheus_chart_dir.stat.exists
+    register: prometheus_deploy
+    changed_when: "'STATUS: deployed' in prometheus_deploy.stdout"
+
+  # Application Deployment with ArgoCD Resource
+  - name: Check application chart existence
+    ansible.builtin.stat:
+      path: "{{ project_dir }}/ArgoCD"
+    register: app_helm_chart_dir
+
+  - name: Deploy application chart
+    command: >-
+      kubectl apply -f ./argocd.yml
+    args:
+      chdir: "{{ project_dir }}/Argocd"
+    when: app_helm_chart_dir.stat.exists
+    register: app_deploy
+    changed_when: "'STATUS: deployed' in app_deploy.stdout"
+
+  handlers:
+  - name: Cleanup Helm script
+    file:
+      path: "{{ helm_script_path }}"
+      state: absent

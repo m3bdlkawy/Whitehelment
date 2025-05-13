@@ -3,7 +3,7 @@ replicaCount: 1
 
 # Container image repository URL (e.g., Docker Hub or GitHub Container Registry)
 image:
-  repository: "m3bdlkawy/depi-project"
+  repository: "m3bdlkawy/whitehelment"
   # The specific tag of the image to deploy
   tag: "latest"
 
@@ -34,4 +34,4 @@ resources:
     cpu: "250m"
 
 # Namespace for deploying the application (optional, set default if needed)
-namespace: "testing-namespace" # Adjust this to your desired namespace
+namespace: "whitehelment-project" # Adjust this to your desired namespace

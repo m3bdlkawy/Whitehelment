@@ -15,7 +15,8 @@ server:
   service:
     type: NodePort
     nodePort: 30080
-  rbacConfig:  # Moved under the same server block
+  rbacConfig:
+    # Moved under the same server block
     policy.csv: |
       g, platform-team, role:admin
       g, team-alpha, role:readonly
@@ -38,10 +39,11 @@ applicationSet:
 controller:
   replicas: 2
   env:
-    - name: ARGOCD_CONTROLLER_REPLICAS
-      value: "2"
-    - name: ARGOCD_CONTROLLER_SHARDING_ALGORITHM
-      value: "consistent-hashing"
+  - name: ARGOCD_CONTROLLER_REPLICAS
+    value: "2"
+  - name: ARGOCD_CONTROLLER_SHARDING_ALGORITHM
+    value: "consistent-hashing"
+
 # # Multi-Tenancy Configuration
 # projects:
 #   # Example project for team-alpha (repeat for other teams)
@@ -52,15 +54,3 @@ controller:
 #         server: https://kubernetes.default.svc
 #     sourceRepos:
 #       - https://github.com/m3bdlkawy/DevOps-project/tree/main/helm-chart
-
-
-# Add ArgoCD Helm repo
-helm repo add argo https://argoproj.github.io/argo-helm
-
-# Install in argocd namespace
-helm upgrade --install argocd argo/argo-cd \
-  --namespace argocd \
-  --create-namespace \
-  --values argocd-values.yaml
-kubectl -n argocd get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d && echo

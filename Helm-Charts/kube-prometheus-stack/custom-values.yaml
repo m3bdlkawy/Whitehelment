@@ -9,6 +9,3 @@ grafana:
     type: NodePort
     nodePort: 30302
     port: 8080
-
-
-helm install prometheus prometheus-community/kube-prometheus-stack   --namespace prometheus   --create-namespace  -f prometheus.yaml 
